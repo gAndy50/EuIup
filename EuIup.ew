@@ -1,0 +1,1898 @@
+without warning
+without type_check
+
+include std/machine.e
+include std/dll.e
+include std/os.e
+
+atom iup = 0
+
+ifdef WINDOWS then
+ iup = open_dll("iup.dll")
+ elsifdef LINUX then
+ iup = open_dll("iup.so")
+end ifdef
+
+if iup = -1 then
+	puts(1,"Failed to load iup.dll!\n")
+	abort(0)
+end if
+
+--Flags
+
+public constant IUP_NAME = "IUP - Portable User Interface"
+public constant IUP_DESCRIPTION = "Multi-platform Toolkit for Building Graphical User Interfaces"
+public constant IUP_COPYRIGHT = "Copyright (C) 1994-2016 Tecgraf/PUC-Rio"
+public constant IUP_VERSION = "3.18"
+public constant IUP_VERSION_NUMBER = 318000
+public constant IUP_VERSION_DATE = "2016/03/21"
+
+public constant IUP_ERROR = 1
+public constant IUP_NOERROR = 0
+public constant IUP_OPENED = -1
+public constant IUP_INVALID = -1
+public constant IUP_INVALID_ID = -10
+
+public constant IUP_IGNORE = -1
+public constant IUP_DEFAULT = -2
+public constant IUP_CLOSE = -3
+public constant IUP_CONTINUE = -4
+
+public constant IUP_CENTER = 65535
+public constant IUP_LEFT = 65534
+public constant IUP_RIGHT = 65533
+public constant IUP_MOUSEPOS = 65532
+public constant IUP_CURRENT = 65531
+public constant IUP_CENTERPARENT = 65530
+public constant IUP_TOP = IUP_LEFT
+public constant IUP_BOTTOM = IUP_RIGHT
+
+public enum IUP_SHOW,
+			IUP_RESTORE,
+			IUP_MINIMIZE,
+			IUP_MAXIMIZE,
+			IUP_HIDE
+			
+public enum IUP_SBUP,IUP_SBDN,IUPSBPGUP,IUP_SBPGDN,
+			IUP_SBPOSV,IUP_SBDRAGV,IUP_SBLEFT,IUP_SBRIGHT,
+			IUP_SBPGLEFT,IUP_SBSBPGRIGHT,IUP_SBPOSH,IUP_SBDRAGH
+			
+public constant IUP_BUTTON1 = 1
+public constant IUP_BUTTON2 = 2
+public constant IUP_BUTTON3 = 3
+public constant IUP_BUTTON4 = 4
+public constant IUP_BUTTON5 = 5
+
+public constant IUP_MASK_FLOAT = "[+/-]?(/d+/.?/d*|/./d+)"
+public constant IUP_MASK_UFLOAT = "(/d+/.?/d*|/./d+)"
+public constant IUP_MASK_EFLOAT = "[+/-]?(/d+/.?/d*|/./d+)([eE][+/-]?/d+)?"
+public constant IUP_MASK_FLOATCOMMA = "[+/-]?(/d+/,?/d*|/,/d+)"
+public constant IUP_MASK_UFLOATCOMMA = "(/d+/,?/d*|/,/d+)"
+public constant IUP_MASK_INT = "[+/-]?/d+"
+public constant IUP_MASK_UINT = "/d+"
+
+public constant IUPMASK_FLOAT = IUP_MASK_FLOAT
+public constant IUPMASK_UFLOAT = IUP_MASK_UFLOAT
+public constant IUPMASK_EFLOAT = IUP_MASK_EFLOAT
+public constant IUPMASK_INT = IUP_MASK_INT
+public constant IUPMASK_UINT = IUP_MASK_UINT
+
+public constant IUP_GETPARAM_BUTTON1 = -1
+public constant IUP_GETPARAM_INIT = -2
+public constant IUP_GETPARAM_BUTTON2 = -3
+public constant IUP_GETPARAM_BUTTON3 = -4
+public constant IUP_GETPARAM_CLOSE = -5
+public constant IUP_GETPARAM_OK = IUP_GETPARAM_BUTTON1
+public constant IUP_GETPARAM_CANCEL = IUP_GETPARAM_BUTTON2
+public constant IUP_GETPARAM_HELP = IUP_GETPARAM_BUTTON3
+
+public enum IUP_RECBINARY,IUP_RECTEXT
+
+--Iup Functions
+
+public constant xIupOpen = define_c_func(iup,"IupOpen",{C_POINTER,C_POINTER},C_INT),
+				xIupClose = define_c_proc(iup,"IupClose",{}),
+				xIupVersion = define_c_func(iup,"IUpVersion",{},C_POINTER),
+				xIupVersionNumber = define_c_func(iup,"IupVersionNumber",{},C_INT),
+				xIupVersionDate = define_c_func(iup,"IupVersionDate",{},C_POINTER)
+				
+public function IupOpen(atom arg,atom arg2)
+
+ return c_func(xIupOpen,{arg,arg2})
+	
+end function
+
+public procedure IupClose()
+
+ c_proc(xIupClose,{})
+	
+end procedure
+
+public function IupVersion()
+
+ return c_func(xIupVersion,{})
+	
+end function
+
+public function IupVersionNumber()
+
+ return c_func(xIupVersionNumber,{})
+	
+end function
+
+public function IupVersionDate()
+
+ return c_func(xIupVersionDate,{})
+	
+end function
+
+public constant xIupMainLoop = define_c_func(iup,"IupMainLoop",{},C_INT),
+				xIupLoopStep = define_c_func(iup,"IupLoopStep",{},C_INT),
+				xIupLoopStepWait = define_c_func(iup,"IupLoopStepWait",{},C_INT),
+				xIupMainLoopLevel = define_c_func(iup,"IupMainLoopLevel",{},C_INT),
+				xIupFlush = define_c_proc(iup,"IupFlush",{}),
+				xIupExitLoop = define_c_proc(iup,"IupExitLoop",{})
+				
+public function IupMainLoop()
+
+ return c_func(xIupMainLoop,{})
+	
+end function
+
+public function IupLoopStep()
+
+ return c_func(xIupLoopStep,{})
+	
+end function
+
+public function IupLoopStepWait()
+
+ return c_func(xIupLoopStepWait,{})
+	
+end function
+
+public function IupMainLoopLevel()
+
+ return c_func(xIupMainLoopLevel,{})
+	
+end function
+
+public procedure IupFlush()
+
+ c_proc(xIupFlush,{})
+	
+end procedure
+
+public procedure IupExitLoop()
+
+ c_proc(xIupExitLoop,{})
+	
+end procedure
+
+public constant xIupRecordInput = define_c_func(iup,"IupRecordInput",{C_POINTER,C_INT},C_INT),
+				xIupPlayInput = define_c_func(iup,"IupPlayInput",{C_POINTER},C_INT)
+				
+public function IupRecordInput(sequence file, integer mode)
+
+ atom str = allocate_string(file)
+ atom ret = c_func(xIupRecordInput,{str,mode})
+ 
+ return ret
+	
+end function
+
+public function IupPlayInput(sequence file)
+
+ atom str = allocate_string(file)
+ atom ret = c_func(xIupPlayInput,{str})
+ 
+ return ret
+	
+end function
+
+public constant xIupUpdate = define_c_proc(iup,"IupUpdate",{C_POINTER}),
+				xIupUpdateChildren = define_c_proc(iup,"IupUpdateChildren",{C_POINTER}),
+				xIupRedraw = define_c_proc(iup,"IupRedraw",{C_POINTER,C_INT}),
+				xIupRefresh = define_c_proc(iup,"IupRefresh",{C_POINTER}),
+				xIupRefreshChildren = define_c_proc(iup,"IupRefreshChildren",{C_POINTER})
+				
+public procedure IupUpdate(atom ih)
+
+ c_proc(xIupUpdate,{ih})
+	
+end procedure
+
+public procedure IupUpdateChildren(atom ih)
+
+ c_proc(xIupUpdateChildren,{ih})
+	
+end procedure
+
+public procedure IupRedraw(atom ih,integer children)
+
+ c_proc(xIupRedraw,{ih,children})
+	
+end procedure
+
+public procedure IupRefresh(atom ih)
+
+ c_proc(xIupRefresh,{ih})
+	
+end procedure
+
+public procedure IupRefreshChildren(atom ih)
+
+ c_proc(xIupRefreshChildren,{ih})
+	
+end procedure
+
+public constant xIupExecute = define_c_func(iup,"IupExecute",{C_POINTER,C_POINTER},C_INT),
+				xIupHelp = define_c_func(iup,"IupHelp",{C_POINTER},C_INT)
+				
+public function IupExecute(sequence file, sequence parms)
+
+ atom str,str2
+ str = allocate_string(file)
+ str2 = allocate_string(parms)
+ 
+ atom ret = c_func(xIupExecute,{str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupHelp(sequence url)
+
+ atom str = allocate_string(url)
+ 
+ atom ret = c_func(xIupHelp,{str})
+ 
+ return ret
+	
+end function
+
+public constant xIupLoad = define_c_func(iup,"IupLoad",{C_POINTER},C_POINTER),
+				xIupLoadBuffer = define_c_func(iup,"IupLoadBuffer",{C_POINTER},C_POINTER)
+				
+public function IupLoad(sequence file)
+
+ atom str = allocate_string(file)
+ 
+ atom ret = c_func(xIupLoad,{str})
+ 
+ return ret
+	
+end function
+
+public function IupLoadBuffer(sequence buff)
+
+ atom str = allocate_string(buff)
+ 
+ atom ret = c_func(xIupLoadBuffer,{str})
+ 
+ return ret
+	
+end function
+
+public constant xIupSetLanguage = define_c_proc(iup,"IupSetLanguage",{C_POINTER}),
+				xIupGetLanguage = define_c_func(iup,"IupGetLanguage",{},C_POINTER),
+				xIupSetLanguageString = define_c_proc(iup,"IupSetLanguageString",{C_POINTER,C_POINTER}),
+				xIupStoreLanguageString = define_c_proc(iup,"IupStoreLanguageString",{C_POINTER,C_POINTER}),
+				xIupGetLanguageString = define_c_func(iup,"IupGetLanguageString",{C_POINTER},C_POINTER),
+				xIupSetLanguagePack = define_c_proc(iup,"IupSetLanguagePack",{C_POINTER})
+				
+public procedure IupSetLanguage(sequence lng)
+
+ atom str = allocate_string(lng)
+ c_proc(xIupSetLanguage,{str})
+	
+end procedure
+
+public function IupGetLanguage()
+
+ return c_func(xIupGetLanguage,{})
+	
+end function
+
+public procedure IupSetLanguageString(sequence name,sequence st)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(st)
+ 
+ c_proc(xIupSetLanguageString,{str,str2})
+
+end procedure
+
+public procedure IupStoreLanguageString(sequence name,sequence st)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(st)
+ 
+ c_proc(xIupStoreLanguageString,{str,str2})
+	
+end procedure
+
+public function IupGetLanguageString(sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetLanguageString,{str})
+ 
+ return ret
+	
+end function
+
+public procedure IupSetLanguagePack(atom ih)
+
+ c_proc(xIupSetLanguagePack,{ih})
+	
+end procedure
+
+public constant xIupDestroy = define_c_proc(iup,"IupDestroy",{C_POINTER}),
+				xIupDetach = define_c_proc(iup,"IupDetach",{C_POINTER}),
+				xIupAppend = define_c_func(iup,"IupAppend",{C_POINTER,C_POINTER},C_POINTER),
+				xIupInsert = define_c_func(iup,"IupInsert",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xIupGetChild = define_c_func(iup,"IupGetChild",{C_POINTER,C_INT},C_POINTER),
+				xIupGetChildPos = define_c_func(iup,"IupGetChildPos",{C_POINTER,C_POINTER},C_INT),
+				xIupGetChildCount = define_c_func(iup,"IupGetChildCount",{C_POINTER},C_INT),
+				xIupGetNextChild = define_c_func(iup,"IupGetNextChild",{C_POINTER,C_POINTER},C_POINTER),
+				xIupGetBrother = define_c_func(iup,"IupGetBrother",{C_POINTER},C_POINTER),
+				xIupGetParent = define_c_func(iup,"IupGetParent",{C_POINTER},C_POINTER),
+				xIupGetDialog = define_c_func(iup,"IupGetDialog",{C_POINTER},C_POINTER),
+				xIupGetDialogChild = define_c_func(iup,"IupGetDialogChild",{C_POINTER,C_POINTER},C_POINTER),
+				xIupReparent = define_c_func(iup,"IupReparent",{C_POINTER,C_POINTER,C_POINTER},C_INT)
+				
+public procedure IupDestroy(atom ih)
+
+ c_proc(xIupDestroy,{ih})
+	
+end procedure
+
+public procedure IupDetach(atom child)
+
+ c_proc(xIupDetach,{child})
+	
+end procedure
+
+public function IupAppend(atom ih,atom child)
+
+ return c_func(xIupAppend,{ih,child})
+	
+end function
+
+public function IupInsert(atom ih,atom ref_child,atom child)
+
+ return c_func(xIupInsert,{ih,ref_child,child})
+	
+end function
+
+public function IupGetChild(atom ih,integer pos)
+
+ return c_func(xIupGetChild,{ih,pos})
+	
+end function
+
+public function IupGetChildPos(atom ih,atom child)
+
+ return c_func(xIupGetChildPos,{ih,child})
+	
+end function
+
+public function IupGetChildCount(atom ih)
+
+ return c_func(xIupGetChildCount,{ih})
+	
+end function
+
+public function IupGetNextChild(atom ih,atom child)
+
+ return c_func(xIupGetNextChild,{ih,child})
+	
+end function
+
+public function IupGetBrother(atom ih)
+
+ return c_func(xIupGetBrother,{ih})
+	
+end function
+
+public function IupGetParent(atom ih)
+
+ return c_func(xIupGetParent,{ih})
+	
+end function
+
+public function IupGetDialog(atom ih)
+
+ return c_func(xIupGetDialog,{ih})
+	
+end function
+
+public function IupGetDialogChild(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetDialogChild,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupReparent(atom ih,atom new_parent,atom ref_child)
+
+ return c_func(xIupReparent,{ih,new_parent,ref_child})
+	
+end function
+
+public constant xIupPopup = define_c_func(iup,"IupPopup",{C_POINTER,C_INT,C_INT},C_INT),
+				xIupShow = define_c_func(iup,"IupShow",{C_POINTER},C_INT),
+				xIupShowXY = define_c_func(iup,"IupShowXY",{C_POINTER,C_INT,C_INT},C_INT),
+				xIupHide = define_c_func(iup,"IupHide",{C_POINTER},C_INT),
+				xIupMap = define_c_func(iup,"IupMap",{C_POINTER},C_INT),
+				xIupUnmap = define_c_proc(iup,"IupUnmap",{C_POINTER})
+				
+public function IupPopup(atom ih,integer x,integer y)
+
+ return c_func(xIupPopup,{ih,x,y})
+	
+end function
+
+public function IupShow(atom ih)
+
+ return c_func(xIupShow,{ih})
+	
+end function
+
+public function IupShowXY(atom ih,integer x,integer y)
+
+ return c_func(xIupShowXY,{ih,x,y})
+	
+end function
+
+public function IupHide(atom ih)
+
+ return c_func(xIupHide,{ih})
+	
+end function
+
+public function IupMap(atom ih)
+
+ return c_func(xIupMap,{ih})
+	
+end function
+
+public function IupUnmap(atom ih)
+
+ return c_func(xIupUnmap,{ih})
+	
+end function
+
+public constant xIupResetAttribute = define_c_proc(iup,"IupResetAttribute",{C_POINTER,C_POINTER}),
+				xIupGetAllAttributes = define_c_func(iup,"IupGetAllAttributes",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xIupSetAtt = define_c_func(iup,"IupSetAtt",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xIupSetAttributes = define_c_func(iup,"IupSetAttributes",{C_POINTER,C_POINTER},C_POINTER),
+				xIupGetAttributes = define_c_func(iup,"IupGetAttributes",{C_POINTER},C_POINTER)
+				
+public function IupResetAttribute(atom ih,sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ atom ret = c_func(xIupResetAttribute,{ih,str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupGetAllAttributes(atom ih,sequence names,integer n)
+
+ atom str = allocate_string(names)
+ atom ret = c_func(xIupGetAllAttributes,{ih,str,n})
+ 
+ return ret
+	
+end function
+
+public function IupSetAtt(sequence handle_name,atom ih,sequence name)
+
+ atom str = allocate_string(handle_name)
+ atom str2 = allocate_string(name)
+ atom ret = c_func(xIupSetAtt,{str,ih,str2})
+ 
+ return ret
+	
+end function
+
+public function IupSetAttributes(atom ih,sequence st)
+
+ atom str = allocate_string(st)
+ atom ret = c_func(xIupSetAttributes,{str})
+ 
+ return ret
+	
+end function
+
+public function IupGetAttributes(atom ih)
+
+ return c_func(xIupGetAttributes,{ih})
+	
+end function
+
+public constant xIupSetAttribute = define_c_proc(iup,"IupSetAttribute",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupSetStrAttribute = define_c_proc(iup,"IupSetStrAttribute",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupSetStrf = define_c_proc(iup,"IupSetStrf",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupSetInt = define_c_proc(iup,"IupSetInt",{C_POINTER,C_POINTER,C_INT}),
+				xIupSetFloat = define_c_proc(iup,"IupSetFloat",{C_POINTER,C_POINTER,C_FLOAT}),
+				xIupSetDouble = define_c_proc(iup,"IupSetDouble",{C_POINTER,C_POINTER,C_DOUBLE}),
+				xIupSetRGB = define_c_proc(iup,"IupSetRGB",{C_POINTER,C_POINTER,C_UINT,C_UINT,C_UINT})
+				
+public procedure IupSetAttribute(atom ih,sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupSetAttribute,{ih,str,str2})
+	
+end procedure
+
+public procedure IupSetStrAttribute(atom ih,sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupSetStrAttribute,{ih,str,str2})
+	
+end procedure
+
+public procedure IupSetStrf(atom ih,sequence name,sequence format)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(format)
+
+ c_proc(xIupSetStrf,{ih,str,str2})
+	
+end procedure
+
+public procedure IupSetInt(atom ih,sequence name,integer val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetInt,{ih,str,val})
+	
+end procedure
+
+public procedure IupSetFloat(atom ih,sequence name,atom val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetFloat,{ih,str,val})
+	
+end procedure
+
+public procedure IupSetDouble(atom ih,sequence name,atom val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetDouble,{ih,str,val})
+	
+end procedure
+
+public procedure IupSetRGB(atom ih,sequence name,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetRGB,{ih,str,r,g,b})
+	
+end procedure
+
+public constant xIupGetAttribute = define_c_func(iup,"IupGetAttribute",{C_POINTER,C_POINTER},C_POINTER),
+				xIupGetInt = define_c_func(iup,"IupGetInt",{C_POINTER,C_POINTER},C_INT),
+				xIupGetInt2 = define_c_func(iup,"IupGetInt2",{C_POINTER,C_POINTER},C_INT),
+				xIupGetIntInt = define_c_func(iup,"IupGetIntInt",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xIupGetFloat = define_c_func(iup,"IupGetFloat",{C_POINTER,C_POINTER},C_FLOAT),
+				xIupGetDouble = define_c_func(iup,"IupGetDouble",{C_POINTER,C_POINTER},C_DOUBLE),
+				xIupGetRGB = define_c_proc(iup,"IupGetRGB",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER})
+				
+public function IupGetAttribute(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAttribute,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupGetInt(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetInt,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupGetInt2(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetInt2,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupGetIntInt(atom ih,sequence name,atom i1,atom i2)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetIntInt,{ih,str,i1,i2})
+ 
+ return ret
+	
+end function
+
+public function IupGetFloat(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetFloat,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupGetDouble(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetDouble,{ih,str})
+ 
+ return ret
+	
+end function
+
+public procedure IupGetRGB(atom ih,sequence name,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupGetRGB,{ih,str,r,g,b})
+	
+end procedure
+
+public constant xIupSetAttributeId = define_c_proc(iup,"IupSetAttributeId",{C_POINTER,C_POINTER,C_INT,C_POINTER}),
+				xIupSetStrAttributeId = define_c_proc(iup,"IupSetStrAttributeId",{C_POINTER,C_POINTER,C_INT,C_POINTER}),
+				xIupSetStrfId = define_c_proc(iup,"IupSetStrfId",{C_POINTER,C_POINTER,C_INT,C_POINTER}),
+				xIupSetIntId = define_c_proc(iup,"IupSetIntId",{C_POINTER,C_POINTER,C_INT,C_INT}),
+				xIupSetFloatId = define_c_proc(iup,"IupSetFloatId",{C_POINTER,C_POINTER,C_INT,C_FLOAT}),
+				xIupSetDoubleId = define_c_proc(iup,"IupSetDoubleId",{C_POINTER,C_POINTER,C_INT,C_DOUBLE}),
+				xIupSetRGBId = define_c_proc(iup,"IupSetRGBId",{C_POINTER,C_POINTER,C_INT,C_UINT,C_UINT,C_UINT})
+				
+public procedure IupSetAttributeId(atom ih,sequence name,integer id,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupSetAttributeId,{ih,str,id,str2})
+	
+end procedure
+
+public procedure IupSetStrAttributeId(atom ih,sequence name,integer id,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupSetStrAttributeId,{ih,str,id,str2})
+	
+end procedure
+
+public procedure IupSetStrfId(atom ih,sequence name,integer id,sequence format)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(format)
+ c_proc(xIupSetStrfId,{ih,str,id,str2})
+	
+end procedure
+
+public procedure IupSetIntId(atom ih,sequence name,integer id,integer val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetIntId,{ih,str,id,val})
+	
+end procedure
+
+public procedure IupSetFloatId(atom ih,sequence name,integer id,atom val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetFloatId,{ih,str,id,val})
+	
+end procedure
+
+public procedure IupSetDoubleId(atom ih,sequence name,integer id,atom db)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetDoubleId,{ih,str,id,db})
+	
+end procedure
+
+public procedure IupSetRGBId(atom ih,sequence name,integer id,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetRGBId,{ih,str,id,r,g,b})
+	
+end procedure
+
+public constant xIupGetAttributeId = define_c_func(iup,"IupGetAttributeId",{C_POINTER,C_POINTER,C_INT},C_POINTER),
+				xIupGetIntId = define_c_func(iup,"IupGetIntId",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xIupGetFloatId = define_c_func(iup,"IupGetFloatId",{C_POINTER,C_POINTER,C_INT},C_FLOAT),
+				xIupGetDoubleId = define_c_func(iup,"IupGetDoubleId",{C_POINTER,C_POINTER,C_INT},C_DOUBLE),
+				xIupGetRGBId = define_c_proc(iup,"IupGetRGBId",{C_POINTER,C_POINTER,C_INT,C_UINT,C_UINT,C_UINT})
+				
+public function IupGetAttributeId(atom ih,sequence name,integer id)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAttributeId,{ih,str,id})
+ 
+ return ret
+	
+end function
+
+public function IupGetIntId(atom ih,sequence name,integer id)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetIntId,{ih,str,id})
+ 
+ return ret
+	
+end function
+
+public function IupGetFloatId(atom ih,sequence name,integer id)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetFloatId,{ih,str,id})
+ 
+ return ret
+	
+end function
+
+public function IupGetDoubleId(atom ih,sequence name,integer id)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetDoubleId,{ih,str,id})
+ 
+ return ret
+	
+end function
+
+public procedure IupGetRGBId(atom ih,sequence name,integer id,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupGetRGBId,{ih,str,id,r,g,b})
+	
+end procedure
+
+public constant xIupSetAttributeId2 = define_c_proc(iup,"IupSetAttributeId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER}),
+				xIupSetStrAttributeId2 = define_c_proc(iup,"IupSetStrAttributeId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER}),
+				xIupSetStrfId2 = define_c_proc(iup,"IupSetStrfId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER}),
+				xIupSetIntId2 = define_c_proc(iup,"IupSetIntId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_INT}),
+				xIupSetFloatId2 = define_c_proc(iup,"IupSetFloatId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_FLOAT}),
+				xIupSetDoubleId2 = define_c_proc(iup,"IupSetDoubleId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_DOUBLE}),
+				xIupSetRGBId2 = define_c_proc(iup,"IupSetRGBId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_UINT,C_UINT,C_UINT})
+				
+public procedure IupSetAttributeId2(atom ih,sequence name,integer lin,integer col,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupSetAttributeId2,{ih,str,lin,col,str2})
+	
+end procedure
+
+public procedure IupSetStrAttributeId2(atom ih,sequence name,integer lin,integer col,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ 
+ c_proc(xIupSetStrAttributeId2,{ih,str,lin,col,str2})
+	
+end procedure
+
+public procedure IupSetStrfId2(atom ih,sequence name,integer lin,integer col,sequence format)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(format)
+ c_proc(xIupSetStrfId2,{ih,str,lin,col,str2})
+	
+end procedure
+
+public procedure IupSetIntId2(atom ih,sequence name,integer lin,integer col,integer val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetIntId2,{ih,str,lin,col,val})
+	
+end procedure
+
+public procedure IupSetFloatId2(atom ih,sequence name,integer lin,integer col,atom val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetFloatId2,{ih,str,lin,col,val})
+	
+end procedure
+
+public procedure IupSetDoubleId2(atom ih,sequence name,integer lin,integer col,atom val)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetDoubleId2,{ih,str,lin,col,val})
+	
+end procedure
+
+public procedure IupSetRGBId2(atom ih,sequence name,integer lin,integer col,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetRGBId2,{ih,str,lin,col,r,g,b})
+	
+end procedure
+
+public constant xIupGetAttributeId2 = define_c_func(iup,"IupGetAttributeId2",{C_POINTER,C_POINTER,C_INT,C_INT},C_POINTER),
+				xIupGetIntId2 = define_c_func(iup,"IupGetIntId2",{C_POINTER,C_POINTER,C_INT,C_INT},C_INT),
+				xIupGetFloatId2 = define_c_func(iup,"IupGetFloatId2",{C_POINTER,C_POINTER,C_INT,C_INT},C_FLOAT),
+				xIupGetDoubleId2 = define_c_func(iup,"IupGetDoubleId2",{C_POINTER,C_POINTER,C_INT,C_INT},C_DOUBLE),
+				xIupGetRGBId2 = define_c_proc(iup,"IupGetRGBId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER,C_POINTER,C_POINTER})
+				
+public function IupGetAttributeId2(atom ih,sequence name,integer lin,integer col)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAttributeId2,{ih,str,lin,col})
+ 
+ return ret
+	
+end function
+
+public function IupGetIntId2(atom ih,sequence name,integer lin,integer col)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetIntId2,{ih,str,lin,col})
+ 
+ return ret
+	
+end function
+
+public function IupGetFloatId2(atom ih,sequence name,integer lin,integer col)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetFloatId2,{ih,str,lin,col})
+ 
+ return ret
+	
+end function
+
+public function IupGetDoubleId2(atom ih,sequence name,integer lin,integer col)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetDoubleId2,{ih,str,lin,col})
+ 
+ return ret
+	
+end function
+
+public procedure IupGetRGBId2(atom ih,sequence name,integer lin,integer col,atom r,atom g,atom b)
+
+ atom str = allocate_string(name)
+ c_proc(xIupGetRGBId2,{ih,str,lin,col,r,g,b})
+	
+end procedure
+
+public constant xIupSetGlobal = define_c_proc(iup,"IupSetGlobal",{C_POINTER,C_POINTER}),
+				xIupSetStrGlobal = define_c_proc(iup,"IupSetStrGlobal",{C_POINTER,C_POINTER}),
+				xIupGetGlobal = define_c_func(iup,"IupGetGlobal",{C_POINTER},C_POINTER)
+				
+public procedure IupSetGlobal(sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ 
+ c_proc(xIupSetGlobal,{str,str2})
+	
+end procedure
+
+public procedure IupSetStrGlobal(sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ 
+ c_proc(xIupSetStrGlobal,{str,str2})
+	
+end procedure
+
+public function IupGetGlobal(sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetGlobal,{str})
+ 
+ return ret
+	
+end function
+
+public constant xIupSetFocus = define_c_func(iup,"IupSetFocus",{C_POINTER},C_POINTER),
+				xIupGetFocus = define_c_func(iup,"IupGetFocus",{},C_POINTER),
+				xIupPreviousField = define_c_func(iup,"IupPreviousField",{C_POINTER},C_POINTER),
+				xIupNextField = define_c_func(iup,"IupNextField",{C_POINTER},C_POINTER)
+				
+public function IupSetFocus(atom ih)
+
+ return c_func(xIupSetFocus,{ih})
+	
+end function
+
+public function IupGetFocus()
+
+ return c_func(xIupGetFocus,{})
+	
+end function
+
+public function IupPreviousField(atom ih)
+
+ return c_func(xIupPreviousField,{ih})
+	
+end function
+
+public function IupNextField(atom ih)
+
+ return c_func(xIupNextField,{ih})
+	
+end function
+
+public constant xIupGetCallback = define_c_func(iup,"IupGetCallback",{C_POINTER,C_POINTER},C_POINTER),
+				xIupSetCallback = define_c_func(iup,"IupSetCallback",{C_POINTER,C_POINTER,C_POINTER},C_POINTER),
+				xIupSetCallbacks = define_c_func(iup,"IupSetCallbacks",{C_POINTER,C_POINTER,C_POINTER},C_POINTER)
+				
+public function IupGetCallback(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetCallback,{ih,str})
+ 
+ return ret
+	
+end function
+
+public function IupSetCallback(atom ih,sequence name,atom func)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupSetCallback,{ih,str,func})
+ 
+ return ret
+	
+end function
+
+public function IupSetCallbacks(atom ih,sequence name,atom func)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupSetCallbacks,{ih,str,func})
+ 
+ return ret
+	
+end function
+
+public constant xIupGetFunction = define_c_func(iup,"IupGetFunction",{C_POINTER},C_POINTER),
+				xIupSetFunction = define_c_func(iup,"IupSetFunction",{C_POINTER,C_POINTER},C_POINTER)
+				
+public function IupGetFunction(sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetFunction,{str})
+ 
+ return ret
+	
+end function
+
+public function IupSetFunction(sequence name,atom func)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupSetFunction,{str,func})
+ 
+ return ret
+	
+end function
+
+public constant xIupGetHandle = define_c_func(iup,"IupGetHandle",{C_POINTER},C_POINTER),
+				xIupSetHandle = define_c_func(iup,"IupSetHandle",{C_POINTER,C_POINTER},C_POINTER),
+				xIupGetAllNames = define_c_func(iup,"IupGetAllNames",{C_POINTER,C_INT},C_INT),
+				xIupGetAllDialogs = define_c_func(iup,"IupGetAllDialoges",{C_POINTER,C_INT},C_INT),
+				xIupGetName = define_c_func(iup,"IupGetName",{C_POINTER},C_POINTER)
+				
+public function IupGetHandle(sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetHandle,{str})
+ 
+ return ret
+	
+end function
+
+public function IupSetHandle(sequence name,atom ih)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupSetHandle,{str,ih})
+ 
+ return ret
+	
+end function
+
+public function IupGetAllNames(sequence name,integer n)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAllNames,{str,n})
+ 
+ return ret
+	
+end function
+
+public function IupGetAllDialogs(sequence name,integer n)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAllDialogs,{str,n})
+ 
+ return ret
+	
+end function
+
+public function IupGetName(atom ih)
+
+ return c_func(xIupGetName,{ih})
+	
+end function
+
+public constant xIupSetAttributeHandle = define_c_proc(iup,"IupSetAttributeHandle",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupGetAttributeHandle = define_c_func(iup,"IupGetAttributeHandle",{C_POINTER,C_POINTER},C_POINTER)
+				
+public procedure IupSetAttributeHandle(atom ih,sequence name,atom ih_name)
+
+ atom str = allocate_string(name)
+ c_proc(xIupSetAttributeHandle,{ih,str,ih_name})
+	
+end procedure
+
+public function IupGetAttributeHandle(atom ih,sequence name)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAttributeHandle,{ih,str})
+ 
+ return ret
+	
+end function
+
+public constant xIupGetClassName = define_c_func(iup,"IupGetClassName",{C_POINTER},C_POINTER),
+				xIupGetClassType = define_c_func(iup,"IupGetClassType",{C_POINTER},C_POINTER),
+				xIupGetAllClasses = define_c_func(iup,"IupGetAllClasses",{C_POINTER,C_INT},C_INT),
+				xIupGetClassAttributes = define_c_func(iup,"IupGetClassAttributes",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xIupGetClassCallbacks = define_c_func(iup,"IupGetClassCallbacks",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xIupSaveClassAttributes = define_c_proc(iup,"IupSaveClassAttributes",{C_POINTER}),
+				xIupCopyClassAttributes = define_c_proc(iup,"IupCopyClassAttributes",{C_POINTER,C_POINTER}),
+				xIupSetClassDefaultAttribute = define_c_proc(iup,"IupSetClassDefaultAttribute",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupClassMatch = define_c_func(iup,"IupClassMatch",{C_POINTER,C_POINTER},C_INT)
+				
+public function IupGetClassName(atom ih)
+
+ return c_func(xIupGetClassName,{ih})
+	
+end function
+
+public function IupGetClassType(atom ih)
+
+ return c_func(xIupGetClassType,{ih})
+	
+end function
+
+public function IupGetAllClasses(sequence name,integer n)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupGetAllClasses,{str})
+ 
+ return ret
+	
+end function
+
+public function IupGetClassAttributes(sequence cname,sequence name,integer n)
+
+ atom str = allocate_string(cname)
+ atom str2 = allocate_string(name)
+ atom ret = c_func(xIupGetClassAttributes,{str,str2,n})
+ 
+ return ret
+	
+end function
+
+public function IupGetClassCallbacks(sequence cname,sequence name,integer n)
+
+ atom str = allocate_string(cname)
+ atom str2 = allocate_string(name)
+ atom ret = c_func(xIupGetClassCallbacks,{str,str2,n})
+ 
+ return ret
+	
+end function
+
+public procedure IupSaveClassAttributes(atom ih)
+
+ c_proc(xIupSaveClassAttributes,{ih})
+	
+end procedure
+
+public procedure IupCopyClassAttributes(atom ih,atom ih2)
+
+ c_proc(xIupCopyClassAttributes,{ih,ih2})
+	
+end procedure
+
+public procedure IupSetClassDefaultAttribute(sequence cname,sequence name,sequence val)
+
+ atom str = allocate_string(cname)
+ atom str2 = allocate_string(name)
+ atom str3 = allocate_string(val)
+ 
+ c_proc(xIupSetClassDefaultAttribute,{str,str2,str3})
+	
+end procedure
+
+public function IupClassMatch(atom ih,sequence cname)
+
+ atom str = allocate_string(cname)
+ atom ret = c_func(xIupClassMatch,{ih,str})
+ 
+ return ret
+	
+end function
+
+public constant xIupCreate = define_c_func(iup,"IupCreate",{C_POINTER},C_POINTER),
+				xIupCreatev = define_c_func(iup,"IupCreatev",{C_POINTER,C_POINTER},C_POINTER),
+				xIupCreatep = define_c_func(iup,"IupCreatep",{C_POINTER,C_POINTER},C_POINTER)
+				
+public function IupCreate(sequence cname)
+
+ atom str = allocate_string(cname)
+ atom ret = c_func(xIupCreate,{str})
+ 
+ return ret
+	
+end function
+
+public function IupCreatev(sequence cname,object parm)
+
+ atom str = allocate_string(cname)
+ atom ret = c_func(xIupCreatev,{str,parm})
+ 
+ return ret
+	
+end function
+
+public function IupCreatep(sequence name,object first)
+
+ atom str = allocate_string(name)
+ atom ret = c_func(xIupCreatep,{str,first})
+ 
+ return ret
+	
+end function
+
+public constant xIupFill = define_c_func(iup,"IupFill",{},C_POINTER),
+				xIupRadio = define_c_func(iup,"IupRadio",{C_POINTER},C_POINTER),
+				xIupVbox = define_c_func(iup,"IupVbox",{C_POINTER,C_POINTER},C_POINTER),
+				xIupVboxv = define_c_func(iup,"IupVboxv",{C_POINTER},C_POINTER),
+				xIupZbox = define_c_func(iup,"IupZbox",{C_POINTER},C_POINTER),
+				xIupZboxv = define_c_func(iup,"IupZboxv",{C_POINTER},C_POINTER),
+				xIupHbox = define_c_func(iup,"IupHbox",{C_POINTER},C_POINTER),
+				xIupHboxv = define_c_func(iup,"IupHboxv",{C_POINTER},C_POINTER)
+				
+public function IupFill()
+
+ return c_func(xIupFill,{})
+	
+end function
+
+public function IupRadio(atom child)
+
+ return c_func(xIupRadio,{child})
+	
+end function
+
+public function IupVbox(atom child, atom x)
+
+ return c_func(xIupVbox,{child, x})
+	
+end function
+
+public function IupVboxv(atom child)
+
+ return c_func(xIupVboxv,{child})
+	
+end function
+
+public function IupZbox(atom child)
+
+ return c_func(xIupZbox,{child})
+	
+end function
+
+public function IupZboxv(atom child)
+
+ return c_func(xIupZboxv,{child})
+	
+end function
+
+public function IupHbox(atom child)
+
+ return c_func(xIupHbox,{child})
+	
+end function
+
+public function IupHboxv(atom child)
+
+ return c_func(xIupHboxv,{child})
+	
+end function
+
+public constant xIupNormalizer = define_c_func(iup,"IupNormalizer",{C_POINTER},C_POINTER),
+				xIupNormalizerv = define_c_func(iup,"IupNormalizerv",{C_POINTER},C_POINTER)
+				
+public function IupNormalizer(atom ih)
+
+ return c_func(xIupNormalizer,{ih})
+	
+end function
+
+public function IupNormalizerv(atom ih)
+
+ return c_func(xIupNormalizerv,{ih})
+	
+end function
+
+public constant xIupCbox = define_c_func(iup,"IupCbox",{C_POINTER},C_POINTER),
+				xIupCboxv = define_c_func(iup,"IupCboxv",{C_POINTER},C_POINTER),
+				xIupSbox = define_c_func(iup,"IupSbox",{C_POINTER},C_POINTER),
+				xIupSplit = define_c_func(iup,"IupSplit",{C_POINTER,C_POINTER},C_POINTER),
+				xIupScrollBox = define_c_func(iup,"IupScrollBox",{C_POINTER},C_POINTER),
+				xIupGridBox = define_c_func(iup,"IupGridBox",{C_POINTER},C_POINTER),
+				xIupGridBoxv = define_c_func(iup,"IupGridBoxv",{C_POINTER},C_POINTER),
+				xIupExpander = define_c_func(iup,"IupExpander",{C_POINTER},C_POINTER),
+				xIupDetachBox = define_c_func(iup,"IupDetachBox",{C_POINTER},C_POINTER),
+				xIupBackgroundBox = define_c_func(iup,"IupBackgroundBox",{C_POINTER},C_POINTER)
+				
+public function IupCbox(atom child)
+
+ return c_func(xIupCbox,{child})
+	
+end function
+
+public function IupCboxv(atom child)
+
+ return c_func(xIupCboxv,{child})
+	
+end function
+
+public function IupSbox(atom child)
+
+ return c_func(xIupSbox,{child})
+	
+end function
+
+public function IupSplit(atom child,atom child2)
+
+ return c_func(xIupSplit,{child,child2})
+	
+end function
+
+public function IupScrollBox(atom child)
+
+ return c_func(xIupScrollBox,{child})
+	
+end function
+
+public function IupGridBox(atom child)
+
+ return c_func(xIupGridBox,{child})
+	
+end function
+
+public function IupGridBoxv(atom child)
+
+ return c_func(xIupGridBoxv,{child})
+	
+end function
+
+public function IupExpander(atom child)
+
+ return c_func(xIupExpander,{child})
+	
+end function
+
+public function IupDetachBox(atom child)
+
+ return c_func(xIupDetachBox,{child})
+	
+end function
+
+public function IupBackgroundBox(atom child)
+
+ return c_func(xIupBackgroundBox,{child})
+	
+end function
+
+public constant xIupFrame = define_c_func(iup,"IupFrame",{C_POINTER},C_POINTER)
+
+public function IupFrame(atom child)
+
+ return c_func(xIupFrame,{child})
+	
+end function
+
+public constant xIupImage = define_c_func(iup,"IupImage",{C_INT,C_INT,C_POINTER},C_POINTER),
+				xIupImageRGB = define_c_func(iup,"IupImageRGB",{C_INT,C_INT,C_POINTER},C_POINTER),
+				xIupImageRGBA = define_c_func(iup,"IupImageRGBA",{C_INT,C_INT,C_POINTER},C_POINTER)
+				
+public function IupImage(integer w,integer h,sequence pix)
+
+ atom str = allocate_string(pix)
+ atom ret = c_func(xIupImage,{w,h,str})
+ 
+ return ret
+	
+end function
+
+public function IupImageRGB(integer w,integer h,sequence pix)
+
+ atom str = allocate_string(pix)
+ atom ret = c_func(xIupImageRGB,{w,h,str})
+ 
+ return ret
+	
+end function
+
+public function IupImageRGBA(integer w,integer h,sequence pix)
+
+ atom str = allocate_string(pix)
+ atom ret = c_func(xIupImageRGBA,{w,h,str})
+ 
+ return ret
+	
+end function
+
+public constant xIupItem = define_c_func(iup,"IupItem",{C_POINTER,C_POINTER},C_POINTER),
+				xIupSubmenu = define_c_func(iup,"IupSubmenu",{C_POINTER,C_POINTER},C_POINTER),
+				xIupSeparator = define_c_func(iup,"IupSeparator",{},C_POINTER),
+				xIupMenu = define_c_func(iup,"IupMenu",{C_POINTER},C_POINTER),
+				xIupMenuv = define_c_func(iup,"IupMenuv",{C_POINTER},C_POINTER)
+				
+public function IupItem(sequence title,sequence act)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(act)
+ atom ret = c_func(xIupItem,{str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupSubmenu(sequence title,atom child)
+
+ atom str = allocate_string(title)
+ atom ret = c_func(xIupSubmenu,{str,child})
+ 
+ return ret
+	
+end function
+
+public function IupSeparator()
+
+ return c_func(xIupSeparator,{})
+	
+end function
+
+public function IupMenu(atom child)
+
+ return c_func(xIupMenu,{child})
+	
+end function
+
+public function IupMenuv(atom child)
+
+ return c_func(xIupMenuv,{child})
+	
+end function
+
+public constant xIupButton = define_c_func(iup,"IupButton",{C_POINTER,C_POINTER},C_POINTER),
+				xIupCanvas = define_c_func(iup,"IupCanvas",{C_POINTER},C_POINTER),
+				xIupDialog = define_c_func(iup,"IupDialog",{C_POINTER},C_POINTER),
+				xIupUser = define_c_func(iup,"IupUser",{},C_POINTER),
+				xIupLabel = define_c_func(iup,"IupLabel",{C_POINTER},C_POINTER),
+				xIupList = define_c_func(iup,"IupList",{C_POINTER},C_POINTER),
+				xIupText = define_c_func(iup,"IupText",{C_POINTER},C_POINTER),
+				xIupMultiLine = define_c_func(iup,"IupMultiLine",{C_POINTER},C_POINTER),
+				xIupToggle = define_c_func(iup,"IupToggle",{C_POINTER,C_POINTER},C_POINTER),
+				xIupTimer = define_c_func(iup,"IupTimer",{},C_POINTER),
+				xIupClipboard = define_c_func(iup,"IupClipboard",{},C_POINTER),
+				xIupProgressBar = define_c_func(iup,"IupProgressBar",{},C_POINTER),
+				xIupVal = define_c_func(iup,"IupVal",{C_POINTER},C_POINTER),
+				xIupTabs = define_c_func(iup,"IupTabs",{C_POINTER},C_POINTER),
+				xIupTabsv = define_c_func(iup,"IupTabsv",{C_POINTER},C_POINTER),
+				xIupTree = define_c_func(iup,"IupTree",{},C_POINTER),
+				xIupLink = define_c_func(iup,"IupLink",{C_POINTER,C_POINTER},C_POINTER),
+				xIupFlatButton = define_c_func(iup,"IupFlatButton",{C_POINTER},C_POINTER),
+				xIupAnimatedLabel = define_c_func(iup,"IupAnimatedLabel",{C_POINTER},C_POINTER),
+				xIupDatePick = define_c_func(iup,"IupDatePick",{},C_POINTER),
+				xIupCalendar = define_c_func(iup,"IupCalendar",{},C_POINTER)
+				
+public function IupButton(sequence title,sequence act)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(act)
+ 
+ atom ret = c_func(xIupButton,{str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupCanvas(sequence act)
+
+ atom str = allocate_string(act)
+ atom ret = c_func(xIupCanvas,{str})
+ 
+ return ret
+	
+end function
+
+public function IupDialog(atom child)
+
+ return c_func(xIupDialog,{child})
+	
+end function
+
+public function IupUser()
+
+ return c_func(xIupUser,{})
+	
+end function
+
+public function IupLabel(sequence title)
+
+ atom str = allocate_string(title)
+ atom ret = c_func(xIupLabel,{str})
+ 
+ return ret
+	
+end function
+
+public function IupList(sequence act)
+
+ atom str = allocate_string(act)
+ atom ret = c_func(xIupList,{str})
+ 
+ return ret
+	
+end function
+
+public function IupText(sequence act)
+
+ atom str = allocate_string(act)
+ atom ret = c_func(xIupText,{str})
+ 
+ return ret
+	
+end function
+
+public function IupMultiLine(sequence act)
+
+ atom str = allocate_string(act)
+ atom ret = c_func(xIupMultiLine,{str})
+ 
+ return ret
+	
+end function
+
+public function IupToggle(sequence title,sequence act)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(act)
+ atom ret = c_func(xIupToggle,{str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupTimer()
+
+ return c_func(xIupTimer,{})
+	
+end function
+
+public function IupClipboard()
+
+ return c_func(xIupClipboard,{})
+	
+end function
+
+public function IupProgressBar()
+
+ return c_func(xIupProgressBar,{})
+	
+end function
+
+public function IupVal(sequence xtype)
+
+ atom str = allocate_string(xtype)
+ atom ret = c_func(xIupVal,{str})
+ 
+ return ret
+	
+end function
+
+public function IupTabs(atom child)
+
+ return c_func(xIupTabs,{child})
+	
+end function
+
+public function IupTabsv(atom child)
+
+ return c_func(xIupTabsv,{child})
+	
+end function
+
+public function IupTree()
+
+ return c_func(xIupTree,{})
+	
+end function
+
+public function IupLink(sequence url,sequence title)
+
+ atom str = allocate_string(url)
+ atom str2 = allocate_string(title)
+ atom ret = c_func(xIupLink,{str,str2})
+ 
+ return ret
+	
+end function
+
+public function IupFlatButton(sequence title)
+
+ atom str = allocate_string(title)
+ atom ret = c_func(xIupFlatButton,{str})
+ 
+ return ret
+	
+end function
+
+public function IupAnimatedLabel(atom ani)
+
+ return c_func(xIupAnimatedLabel,{ani})
+	
+end function
+
+public function IupDatePick()
+
+ return c_func(xIupDatePick,{})
+	
+end function
+
+public function IupCalendar()
+
+ return c_func(xIupCalendar,{})
+	
+end function
+
+public constant xIupSpin = define_c_func(iup,"IupSpin",{},C_POINTER),
+				xIupSpinbox = define_c_func(iup,"IupSpinBox",{C_POINTER},C_POINTER)
+				
+public function IupSpin()
+
+ return c_func(xIupSpin,{})
+	
+end function
+
+public function IupSpinbox(atom child)
+
+ return c_func(xIupSpinbox,{child})
+	
+end function
+
+public constant xIupStringCompare = define_c_func(iup,"IupStringCompare",{C_POINTER,C_POINTER,C_INT,C_INT},C_POINTER)
+
+public function IupStringCompare(sequence str1,sequence str2,integer case_sen,integer lex)
+
+ atom str = allocate_string(str1)
+ atom strx = allocate_string(str2)
+ atom ret = c_func(xIupStringCompare,{str,strx,case_sen,lex})
+ 
+ return ret
+	
+end function
+
+public constant xIupSaveImageAsText = define_c_func(iup,"IupSaveImageAsText",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT)
+
+public function IupSaveImageAsText(atom ih,sequence file,sequence format,sequence name)
+
+ atom str = allocate_string(file)
+ atom str2 = allocate_string(format)
+ atom str3 = allocate_string(name)
+ atom ret = c_func(xIupSaveImageAsText,{ih,str,str2,str3})
+ 
+ return ret
+	
+end function
+
+public constant xIupTextConvertLinColToPos = define_c_proc(iup,"IupTextConvertLinColToPos",{C_POINTER,C_INT,C_INT,C_POINTER}),
+				xIupTextConvertPosToLinCol = define_c_proc(iup,"IupTextConvertPosToLinCol",{C_POINTER,C_INT,C_POINTER,C_POINTER})
+				
+public procedure IupTextConvertLinColToPos(atom ih,integer lin,integer col,atom pos)
+
+ c_proc(xIupTextConvertLinColToPos,{ih,lin,col,pos})
+	
+end procedure
+
+public procedure IupTextConvertPosToLinCol(atom ih,integer pos,atom lin,atom col)
+
+ c_proc(xIupTextConvertPosToLinCol,{ih,pos,lin,col})
+	
+end procedure
+
+public constant xIupConvertXYToPos = define_c_func(iup,"IupConvertXYToPos",{C_POINTER,C_INT,C_INT},C_INT)
+
+public function IupConvertXYToPos(atom ih,integer x,integer y)
+
+ return c_func(xIupConvertXYToPos,{ih,x,y})
+	
+end function
+
+public constant xIupStoreGlobal = define_c_proc(iup,"IupStoreGlobal",{C_POINTER,C_POINTER}),
+				xIupStoreAttribute = define_c_proc(iup,"IupStoreAttribute",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupSetfAttribute = define_c_proc(iup,"IupSetfAttribute",{C_POINTER,C_POINTER,C_POINTER}),
+				xIupStoreAttributeId = define_c_proc(iup,"IupStoreAttributeId",{C_POINTER,C_POINTER,C_INT,C_POINTER}),
+				xIupSetfAttributeId = define_c_proc(iup,"IupSetfAttributeId",{C_POINTER,C_POINTER,C_INT,C_POINTER}),
+				xIupStoreAttributeId2 = define_c_proc(iup,"IupStoreAttributeId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER}),
+				xIupSetfAttributeId2 = define_c_proc(iup,"IupSetfAttributeId2",{C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER})
+				
+public procedure IupStoreGlobal(sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupStoreGlobal,{str,str2})
+	
+end procedure
+
+public procedure IupStoreAttribute(atom ih,sequence name,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupStoreAttribute,{ih,str,str2})
+	
+end procedure
+
+public procedure IupSetfAttribute(atom ih,sequence name,sequence mat)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(mat)
+ c_proc(xIupSetfAttribute,{ih,str,str2})
+	
+end procedure
+
+public procedure IupStoreAttributeId(atom ih,sequence name,integer id,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ 
+ c_proc(xIupStoreAttributeId,{ih,str,id,str2})
+	
+end procedure
+
+public procedure IupSetfAttributeId(atom ih,sequence name,integer id,sequence f)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(f)
+ c_proc(xIupSetfAttributeId,{ih,str,id,str2})
+	
+end procedure
+
+public procedure IupStoreAttributeId2(atom ih,sequence name,integer lin,integer col,sequence val)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(val)
+ c_proc(xIupStoreAttributeId2,{ih,str,lin,col,str2})
+	
+end procedure
+
+public procedure IupSetfAttributeId2(atom ih,sequence name,integer lin,integer col,sequence mat)
+
+ atom str = allocate_string(name)
+ atom str2 = allocate_string(mat)
+ c_proc(xIupSetfAttributeId2,{ih,str,lin,col,str2})
+	
+end procedure
+
+public constant xIupTreeSetUserId = define_c_func(iup,"IupTreeSetUserId",{C_POINTER,C_INT,C_POINTER},C_POINTER),
+				xIupTreeGetUserId = define_c_func(iup,"IupTreeGetUserId",{C_POINTER,C_INT},C_POINTER),
+				xIupTreeGetId = define_c_func(iup,"IupTreeGetId",{C_POINTER,C_POINTER},C_INT),
+				xIupTreeSetAttributeHandle = define_c_proc(iup,"IupTreeSetAttributeHandle",{C_POINTER,C_POINTER,C_INT,C_POINTER})
+				
+public function IupTreeSetUserId(atom ih,integer id,object id2)
+
+ return c_func(xIupTreeSetUserId,{ih,id,id2})
+	
+end function
+
+public function IupTreeGetUserId(atom ih,integer id)
+
+ return c_func(xIupTreeGetUserId,{ih,id})
+	
+end function
+
+public function IupTreeGetId(atom ih,object id)
+
+ return c_func(xIupTreeGetId,{ih,id})
+	
+end function
+
+public procedure IupTreeSetAttributeHandle(atom ih,sequence name,integer id,atom ih_name)
+
+ atom str = allocate_string(name)
+ c_proc(xIupTreeSetAttributeHandle,{ih,str,id,ih_name})
+	
+end procedure
+
+public constant xIupFileDlg = define_c_func(iup,"IupFileDlg",{},C_POINTER),
+				xIupMessageDlg = define_c_func(iup,"IupMessageDlg",{},C_POINTER),
+				xIupColorDlg = define_c_func(iup,"IupColorDlg",{},C_POINTER),
+				xIupFontDlg = define_c_func(iup,"IupFontDlg",{},C_POINTER),
+				xIupProgressDlg = define_c_func(iup,"IupProgressDlg",{},C_POINTER)
+				
+public function IupFileDlg()
+
+ return c_func(xIupFileDlg,{})
+	
+end function
+
+public function IupMessageDlg()
+
+ return c_func(xIupMessageDlg,{})
+	
+end function
+
+public function IupColorDlg()
+
+ return c_func(xIupMessageDlg,{})
+	
+end function
+
+public function IupFontDlg()
+
+ return c_func(xIupFontDlg,{})
+	
+end function
+
+public function IupProgressDlg()
+
+ return c_func(xIupProgressDlg,{})
+	
+end function
+
+public constant xIupGetFile = define_c_func(iup,"IupGetFile",{C_POINTER},C_INT),
+				xIupMessage = define_c_proc(iup,"IupMessage",{C_POINTER,C_POINTER}),
+				xIupMessagef = define_c_proc(iup,"IupMessagef",{C_POINTER,C_POINTER}),
+				xIupAlarm = define_c_func(iup,"IupAlarm",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xIupScanf = define_c_func(iup,"IupScanf",{C_POINTER},C_INT),
+				xIupListDialog = define_c_func(iup,"IupListDialog",{C_INT,C_POINTER,C_INT,C_POINTER,C_INT,C_INT,C_INT,C_POINTER},C_INT),
+				xIupGetText = define_c_func(iup,"IupGetText",{C_POINTER,C_POINTER,C_INT},C_INT),
+				xIupGetColor = define_c_func(iup,"IupGetColor",{C_INT,C_INT,C_POINTER,C_POINTER,C_POINTER},C_INT)
+				
+public function IupGetFile(sequence arg)
+
+ atom str = allocate_string(arg)
+ atom ret = c_func(xIupGetFile,{str})
+ 
+ return ret
+	
+end function
+
+public procedure IupMessage(sequence title,sequence msg)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(msg)
+ c_proc(xIupMessage,{str,str2})
+	
+end procedure
+
+public procedure IupMessagef(sequence title,sequence mat)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(mat)
+ 
+ c_proc(xIupMessage,{str,str2})
+	
+end procedure
+
+public function IupAlarm(sequence title,sequence msg,sequence b1,sequence b2,sequence b3)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(msg)
+ atom str3 = allocate_string(b1)
+ atom str4 = allocate_string(b2)
+ atom str5 = allocate_string(b3)
+ 
+ atom ret = c_func(xIupAlarm,{str,str2,str3,str4,str5})
+ 
+ return ret
+	
+end function
+
+public function IupScanf(sequence mat)
+
+ atom str = allocate_string(mat)
+ atom ret = c_func(xIupScanf,{str})
+ 
+ return ret
+	
+end function
+
+public function IupListDialog(integer xtype,sequence title,integer size,sequence list,integer op,integer col,integer lin,atom marks)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(list)
+ atom ret = c_func(xIupListDialog,{xtype,str,size,str2,op,col,lin,marks})
+ 
+ return ret
+	
+end function
+
+public function IupGetText(sequence title,sequence text,integer size)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(text)
+ atom ret = c_func(xIupGetText,{str,str2,size})
+ 
+ return ret
+	
+end function
+
+public function IupGetColor(integer x,integer y,atom r,atom g,atom b)
+
+ return c_func(xIupGetColor,{x,y,r,g,b})
+	
+end function
+
+public constant xIupGetParam = define_c_func(iup,"IupGetParam",{C_POINTER,C_POINTER,C_POINTER,C_POINTER},C_INT),
+				xIupGetParamv = define_c_func(iup,"IupGetParamv",{C_POINTER,C_POINTER,C_POINTER,C_POINTER,C_INT,C_INT,C_POINTER},C_INT),
+				xIupParamf = define_c_func(iup,"IupParamf",{C_POINTER},C_POINTER),
+				xIupParamBox = define_c_func(iup,"IupParamBox",{C_POINTER,C_POINTER,C_INT},C_POINTER)
+				
+public function IupGetParam(sequence title,atom act,object dat,sequence mat)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(mat)
+ atom ret = c_func(xIupGetParam,{str,act,dat,str2})
+ 
+ return ret
+	
+end function
+
+public function IupGetParamv(sequence title,atom act,object dat,sequence mat,integer cnt,integer ex,object dat2)
+
+ atom str = allocate_string(title)
+ atom str2 = allocate_string(mat)
+ atom ret = c_func(xIupGetParamv,{str,act,dat,str2,cnt,cnt,ex,dat2})
+ 
+ return ret
+	
+end function
+
+public function IupParamf(sequence mat)
+
+ atom str = allocate_string(mat)
+ atom ret = c_func(xIupParamf,{str})
+ 
+ return ret
+	
+end function
+
+public function IupParamBox(atom par,atom parms,integer cnt)
+
+ return c_func(xIupParamBox,{par,parms,cnt})
+	
+end function
+
+public constant xIupLayoutDialog = define_c_func(iup,"IupLayoutDialog",{C_POINTER},C_POINTER),
+				xIupElementPropertiesDialog = define_c_func(iup,"IupElementPropertiesDialog",{C_POINTER},C_POINTER)
+				
+public function IupLayoutDialog(atom dia)
+
+ return c_func(xIupLayoutDialog,{dia})
+	
+end function
+
+public function IupElementPropertiesDialog(atom ele)
+
+ return c_func(xIupElementPropertiesDialog,{ele})
+	
+end function
+­13.25

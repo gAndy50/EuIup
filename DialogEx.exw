@@ -1,0 +1,18 @@
+include EuIup.ew
+
+if IupOpen(0,0) = -1 then
+	puts(1,"Failed to Initialize Iup!\n")
+	abort(0)
+end if
+
+atom lab = IupLabel("Hello Label")
+atom dlg = IupDialog(IupVbox(lab,0))
+
+IupSetAttribute(dlg,"DIALOG","Hello There")
+
+IupShowXY(dlg,IUP_CENTER,IUP_CENTER)
+
+IupMainLoop()
+
+IupClose()
+­17.10

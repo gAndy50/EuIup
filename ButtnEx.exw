@@ -1,0 +1,11 @@
+include EuIup.ew
+
+if IupOpen(0,0) = -1 then
+	puts(1,"Failed to Initialize Iup!\n")
+	abort(0)
+end if
+
+IupMessage("Hello","Hello World")
+
+IupClose()
+­8.28
