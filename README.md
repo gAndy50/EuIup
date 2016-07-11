@@ -1,6 +1,6 @@
 Title: EuIup
 Author: Andy P.
-IUp version wrapped: 3.1.8
+IUp version wrapped: 3.1.9
 Date: 6/10/16
 Contact/Paypal: g_andy <at> live.com
 
@@ -18,6 +18,10 @@ programs made using this software as you wish.
 Update: 6/13/16
 
 Change some code so users will not have to change code to use EuIup on their desired platform.
+
+Update: 7/7/16
+
+Added some more functions and updated for Iup 3.1.9
 
 
 Euphoria's site: htpp://rapideuphoria.com
