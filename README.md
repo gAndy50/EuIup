@@ -1,7 +1,11 @@
 Title: EuIup
+
 Author: Andy P.
-IUp version wrapped: 3.1.9
+
+IUP version wrapped: 3.1.9
+
 Date: 6/10/16
+
 Contact/Paypal: g_andy <at> live.com
 
 ABOUT:
