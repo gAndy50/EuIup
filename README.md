@@ -6,7 +6,7 @@ IUP version wrapped: 3.1.9
 
 Date: 6/10/16
 
-Contact/Paypal: g_andy <at> live.com
+Contact/Paypal: g_andy at live.com
 
 ABOUT:
 
