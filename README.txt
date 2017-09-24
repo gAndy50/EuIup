@@ -24,7 +24,7 @@ Update: 7/7/16
 Added some more functions and updated for Iup 3.1.9
 
 
-Euphoria's site: htpp://rapideuphoria.com
+Euphoria's site: http://rapideuphoria.com
 
 Iup's main site: http://webserver2.tecgraf.puc-rio.br/iup/
 
