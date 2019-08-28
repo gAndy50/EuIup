@@ -14,6 +14,8 @@ EuIup is a wrapper of Iup for the Euphoria programming language. It was written 
 functions have been wrapped. Iup is a way to create GUI programs that are able to be cross-platform.
 Included in this wrapper is the wrapper itself and a couple of example programs.
 
+LICENSE:
+
 This software is provided as-is. There is no warranty for this software. You use this at your own risk.
 You may not hold the developer or those associated with the Euphoria programming language responsible
 for anything. This software is provided in the event that it will be helpful. You may distribute 
