@@ -1,20 +1,20 @@
-Title: EuIup
+# Title: EuIup
 
-Author: Andy P.
+# Author: Andy P.
 
-IUP version wrapped: 3.1.9
+# IUP version wrapped: 3.1.9
 
-Date: 6/10/16
+# Date: 6/10/16
 
 Contact/Paypal: g_andy at live.com
 
-ABOUT:
+# ABOUT:
 
 EuIup is a wrapper of Iup for the Euphoria programming language. It was written in Euphoria 4.0.5. All
 functions have been wrapped. Iup is a way to create GUI programs that are able to be cross-platform.
 Included in this wrapper is the wrapper itself and a couple of example programs.
 
-LICENSE:
+# LICENSE:
 
 This software is provided as-is. There is no warranty for this software. You use this at your own risk.
 You may not hold the developer or those associated with the Euphoria programming language responsible
@@ -29,7 +29,7 @@ Update: 7/7/16
 
 Added some more functions and updated for Iup 3.1.9
 
-
+# LINKS
 Euphoria's site: http://rapideuphoria.com
 
 Iup's main site: http://webserver2.tecgraf.puc-rio.br/iup/
